@@ -1,0 +1,8 @@
+FROM node:20-slim
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3001
+# Usando nodemon para reiniciar o server automaticamente ao salvar
+CMD ["npx", "nodemon", "src/server.js"]
