@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Home from "./pages/Home"
+import Register from "./pages/Register"
 import api from "./api";
 
 
 const ProtectedRoute = ({ user, children }) => {
-  if (!user) {
+  const token = user || localStorage.getItem("token");
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
   return children;
@@ -20,10 +22,11 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await api.get("/me");
+        const response = await api.get("/auth/me");
         setUser(response.data); // Usuário logado
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
-        setUser(null); // Cookie inválido ou inexistente
+        setUser(null); // Token inválido ou inexistente
       } finally {
         setLoading(false);
       }
@@ -43,6 +46,8 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/" element={<Navigate to="/login" replace />} />
+
+        <Route path="/register" element={<Register />} />
 
         <Route path="/home" element={
           <ProtectedRoute user={user}>

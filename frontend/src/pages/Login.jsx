@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
 
-function UserLogin(){
+function UserLogin() {
 
         
     const [email, setEmail] = useState("");
@@ -12,16 +12,16 @@ function UserLogin(){
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-        await api.post("/login", {
-            email,
-            password,
-        });
+            const response = await api.post("/auth/login", {
+                email,
+                password,
+            });
 
-
-        navigate("/home");
+            localStorage.setItem("token", response.data.access_token);
+            navigate("/home");
         } catch (error) {
-        console.error("Erro ao fazer login:", error);
-        alert("Falha no login. Verifique suas credenciais.");
+            console.error("Erro ao fazer login:", error);
+            alert("Falha no login. Verifique suas credenciais.");
         }
     };    
 
@@ -32,7 +32,7 @@ function UserLogin(){
 
     return <div className="flex flex-col min-h-screen items-center justify-center gap-8 bg-[#f0f2f5]">
         <div>
-            <img src="./public/Logo.png" alt="Logo do SayIt" />
+            <img src="./Logo.png" alt="Logo do SayIt" />
         </div>
         <form className="flex flex-col w-full h-full max-w-md gap-4 border 
         bg-white rounded-2xl border-slate-100 shadow-xl items-center p-4 py-8 " 
@@ -58,8 +58,7 @@ function UserLogin(){
             
             <p className="text-gray-500 hover:text-[#1981c9] cursor-pointer">Esqueceu sua senha?</p>
             
-            <p className="text-gray-500">Não tem uma conta? <a href="#" className="text-[#1D98F0] 
-            hover:text-[#1981c9]">Inscreva-se</a></p>
+            <p className="text-gray-500">Não tem uma conta? <Link to="/register" className="text-[#1D98F0] hover:text-[#1981c9]">Inscreva-se</Link></p>
         </form>
     </div>
 }
